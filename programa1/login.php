@@ -12,6 +12,7 @@ if(isset($_SESSION['user_id'])){
 	<style type="text/css" media="all">@import "http://localhost/PrimerParcial/programa1/estilos.css";</style>
 </head>
 
+<body>
 	<div id="templatemo_container_wrapper">
 		<div class="templatemo_spacer"></div>
 	<div id="templatemo_container">
@@ -34,17 +35,19 @@ if(isset($_SESSION['user_id'])){
 	<form action="validation.php" method="post">
 		<table>
 		<tr>
-			<td><label>usuario</label></td>
+			<td><label>Usuario</label></td>
 			<td><input type="text" name="user"></td>
 		</tr>
 		<tr>
-			<td><label>contraseña</label></td>
+			<td><label>Contraseña</label></td>
 			<td><input type="password" name="pass"></td>
 		</tr>
-		<tr>
+		</table>
+		<table>
+			<tr>
 			<td><input type="submit" name="Aceptar" value="Aceptar"></td>
 			<td><input type="reset" name="Cancelar" value="Cancelar"></td>
-		</tr>
+			</tr>
 		</table>
 	</form>
 	</div>

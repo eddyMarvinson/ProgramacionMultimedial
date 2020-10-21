@@ -22,11 +22,12 @@ if(!isset($_SESSION['user_id'])){
      </div>
   	</div>
 
+  	<body style=<?php echo '"background-color:'.$_SESSION['user_background'].'"';?> >
   	<div id="templatemo_left_column">
   		<div class="text_area" align="justify">
   		<div class="section_box2" align="justify">
-	<div class="title">!Bienvenido <?php
-		echo $_SESSION['user_background'];
+	<div class="title">!Bienvenido
+		<?php
 		include "conexion.inc.php";
 		$sql = "select * from identificador where ci = '".$_SESSION["user_id"]."'";
 		$resultado = mysqli_query($conn, $sql);
@@ -40,8 +41,8 @@ if(!isset($_SESSION['user_id'])){
 	<div class="text_area" align="justify">
 	<div class="section_box2" align="justify">
 	<p>Ejercicio realice lo mismo del punto (b) pero con PHP.</p>
-	<table border="1px">
-		<tr>
+	<table width="100%" border="3px solid purple">
+		<tr bgcolor="#4040ff" style="color:#FFFFFF">
 			<td>CH</td>
 			<td>LP</td>
 			<td>CB</td>
@@ -73,12 +74,33 @@ if(!isset($_SESSION['user_id'])){
 	</div>
 
 	<div id="templatemo_right_column">
-	<div class="section_box2" align="justify">
+	<div class="section_box" align="justify">
+		<div class="title">Foto de Perfil</div>
+	<form action="validation.php" method="post">
+		<img src = "<?php echo $_SESSION['user_img'];?>" width="120" height="80" class="templatemo_pic" />
+		<table>
+			<tr>
+				<td>
+					<select name="img">
+						<option value="images/001.jpg">Básico</option>
+						<option value="images/002.jpg">Nuevo</option>
+					</select>
+				</td>
+				<td>
+					<input type="submit" name="Cambiar" value="Cambiar">
+				</td>
+			</tr>
+		</table>
+	</form>
+	</div>
+	<div class="section_box" align="justify">
+		<div class="title">Color de Fondo</div>
 	<form action="validation.php" method="post">
 		<table>
 			<tr>
 				<td>
 				<select name="color">
+    			<option value="#999999">Plomo</option> 
     			<option value="blue">Azul</option> 
     			<option value="red">Rojo</option> 
     			<option value="yellow">Amarillo</option> 
@@ -88,21 +110,16 @@ if(!isset($_SESSION['user_id'])){
 				<input type="submit" name="Actualizar" value="Actualizar">
 				</td>
 			</tr>
-			<tr>
-				<td>
-					<img src="images/s_flashmo_022_park_20.jpg" alt="Photo Two" title="Photo Two" width="60" height="45" class="templatemo_pic" />
-				</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>
-				<input type="submit" name="Salir" value="Salir">
-				</td>
-				<td></td>
-			</tr>
 		</table>
 	</form>
 	</div>
+
+	<div class="section_box" align="justify">
+	<form action="validation.php" method="post">
+		<input type="submit" name="Salir" value="Salir">
+	</form>
+	</div>
+
 	</div>
 	<div id="templatemo_footer"></div>
 	</div>

@@ -9,7 +9,8 @@ if (isset($_POST["Aceptar"])){
 		header('Location:login.php');
 	} else {
 		$_SESSION["user_id"] = $_POST["user"];
-		$_SESSION["user_background"] = '<body style="background-image:url(images/templatemo_bg.gif)">';
+		$_SESSION["user_background"] = '#999999';
+		$_SESSION["user_img"] = "images/001.jpg";
 		header('Location:index.php');
 	}
 }
@@ -18,7 +19,11 @@ if (isset($_POST["Salir"])) {
 	header('Location:index.php');
 }
 if (isset($_POST["Actualizar"])) {
-	$_SESSION["user_background"] = '<body style="background-color:'.$_POST["color"].'">';
+	$_SESSION["user_background"] = $_POST["color"];
+	header('Location:index.php');
+}
+if (isset($_POST["Cambiar"])) {
+	$_SESSION["user_img"] = $_POST["img"];
 	header('Location:index.php');
 }
 ?>

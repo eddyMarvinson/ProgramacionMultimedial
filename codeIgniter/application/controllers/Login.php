@@ -4,14 +4,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Login extends CI_Controller {  
       
     public function index()  
-    {  
+    {
+        $this->load->helper('url');
+
         $this->load->view('login_view');  
     }  
     public function process()  
     {  
         $user = $this->input->post('user');  
         $pass = $this->input->post('pass');
-        $colorBack = 'white';
+        $colorBack = '#999999';
         if ($user=='1000' && $pass=='1234')   
         {  
             $this->session->set_userdata(array('user'=>$user, 'color'=>$colorBack));  
@@ -29,7 +31,7 @@ class Login extends CI_Controller {
     }  
     public function update(){
         $colorBack = $this->input->post('color');
-        $this->session->set_userdata(array('color'=>$colorBack));
+        $this->session->set_userdata(array('color' => $colorBack));
         $this->load->view('welcome_view');     
     }
 }  
