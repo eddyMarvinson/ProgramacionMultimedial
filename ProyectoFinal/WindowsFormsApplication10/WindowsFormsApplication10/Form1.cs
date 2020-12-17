@@ -29,14 +29,26 @@ namespace WindowsFormsApplication10
             textBox3.Text = "";
             textBox4.Text = "";
             textBox5.Text = "";
+            textBox6.Text = "";
+            textBox7.Text = "";
+            textBox8.Text = "";
+            textBox9.Text = "";
         }
         private void button1_Click(object sender, EventArgs e)
         {
             openFileDialog1.Filter = "Imagenes JPG|*.jpg";
             openFileDialog1.ShowDialog();
-            Bitmap bmp = new Bitmap(openFileDialog1.FileName);
-            pictureBox1.Image = bmp;
-            pictureBox2.Image = bmp;
+            try
+            {
+                Bitmap bmp = new Bitmap(openFileDialog1.FileName);
+                pictureBox1.Image = bmp;
+                pictureBox2.Image = bmp;
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show(err.Message);
+            }
+            refreshData();
         }
         private void Form1_Load(object sender, EventArgs e) { }
         private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
@@ -50,6 +62,8 @@ namespace WindowsFormsApplication10
                 textBox1.Text = c.R.ToString();
                 textBox2.Text = c.G.ToString();
                 textBox3.Text = c.B.ToString();
+                textBox6.Text = e.X.ToString();
+                textBox7.Text = e.Y.ToString();
             }
             else
             {
@@ -71,12 +85,12 @@ namespace WindowsFormsApplication10
                 conexion1 conn = new conexion1();
                 String sentencia = "insert into color (name, red, green, blue) values ('" + tipoText + "'," + rText + "," + gText + "," + bText + ")";
                 conn.EjecutarSentencia(new SqlCommand(sentencia));
-                refreshData();
             }
             else
             {
-                MessageBox.Show("Completar los valores ingresados");
+                MessageBox.Show("Falta completar los valores");
             }
+            refreshData();
         }
         private void label5_Click(object sender, EventArgs e) {}
         private void pictureBox2_Click(object sender, EventArgs e) {}
@@ -89,7 +103,7 @@ namespace WindowsFormsApplication10
                 List<int> redAvg = new List<int>();
                 List<int> blueAvg = new List<int>();
                 List<int> greenAvg = new List<int>();
-                int redTipo=-1, greenTipo, blueTipo;
+                int redTipo, greenTipo, blueTipo;
                 foreach (String s in listaTipos)
                 {
                     redTipo = conn.EjecutarSentenciaRetornaEnteros(new SqlCommand("SELECT avg(red) as value FROM color WHERE name = '" + s + "'"));
@@ -140,6 +154,7 @@ namespace WindowsFormsApplication10
             {
                 MessageBox.Show("Cargue una imagen");
             }
+            refreshData();
         }
         private int funcionEvaluadora(int r1, int g1, int b1, int r2, int g2, int b2)
         {
@@ -153,11 +168,105 @@ namespace WindowsFormsApplication10
                 conexion1 conn = new conexion1();
                 String sentencia = "delete from color where name = '" + textBox5.Text + "'";
                 conn.EjecutarSentencia(new SqlCommand(sentencia));
-                refreshData();
-            } else
+            }
+            else
             {
                 MessageBox.Show("Ingrese un valor en Textura");
             }
+            refreshData();
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            String xText = textBox6.Text;
+            String yText = textBox7.Text;
+            String anchuraText = textBox8.Text;
+            String tipoText = textBox9.Text;
+            if (xText != "" && yText != "" && anchuraText != "" && tipoText != "")
+            {
+                int u = Convert.ToInt32(xText);
+                int v = Convert.ToInt32(yText);
+                int w = Convert.ToInt32(anchuraText);
+                FloodFill(u, v, w, tipoText);
+            }
+            else
+            {
+                MessageBox.Show("Falta completar los valores");
+            }
+            refreshData();
+        }
+
+        private void FloodFill(int x, int y, int w, String tipoText)
+        {
+            conexion1 conn = new conexion1();
+            Bitmap bmp = new Bitmap(pictureBox1.Image);
+            int n = bmp.Width;
+            int m = bmp.Height;
+            Color c = new Color();
+            bool[,,] arrRGB = new bool[256, 256, 256];
+            for (int i = 0; i < 256; ++i)
+                for (int j = 0; j < 256; ++j)
+                    for (int k = 0; k < 256; ++k)
+                        arrRGB[i, j, k] = false;
+
+            int[] dx = {-1,0,1,1,1,0,-1,-1};
+            int[] dy = {1,1,1,0,-1,-1,-1,0};
+            int[,] distance = new int[n, m];
+            for (int i = 0; i < n; ++i)
+                for (int j = 0; j < m; ++j)
+                    distance[i, j] = -1;
+            
+            Stack<Point> stack = new Stack<Point>();
+            Point p1 = new Point(x, y);
+            distance[x, y] = 0;
+            stack.Push(p1);
+            while (stack.Count() > 0)
+            {
+                p1 = stack.Pop();
+                if (distance[p1.X, p1.Y] > w)
+                    continue;
+                for (int i = 0; i < 8; ++i)
+                {
+                    int u = p1.X + dx[i];
+                    int v = p1.Y + dy[i];
+                    if (0 <= u && u < n && 0 <= v && v < m)
+                    {
+                        if (distance[u, v] == -1)
+                        {
+                            c = bmp.GetPixel(u, v);
+                            if(!arrRGB[c.R, c.G, c.B])
+                            {
+                                arrRGB[c.R, c.G, c.B] = true;
+                                String sentencia = "insert into color (name, red, green, blue) values ('" + tipoText + "'," + (c.R).ToString() + "," + (c.G).ToString() + "," + (c.B).ToString() + ")";
+                                conn.EjecutarSentencia(new SqlCommand(sentencia));
+                            }
+                            distance[u, v] = distance[p1.X, p1.Y] + 1;
+                            stack.Push(new Point(u, v));
+                        }
+                    }
+                }
+            }
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            if (pictureBox2.Image != null)
+            {
+                pictureBox1.Image = pictureBox2.Image;
+            }
+            else
+            {
+                MessageBox.Show("Cargue una imagen");
+            }
+            refreshData();
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            String sentencia = "delete from color";
+            conexion1 conn = new conexion1();
+            conn.EjecutarSentencia(new SqlCommand(sentencia));
+            refreshData();
         }
     }
 }
